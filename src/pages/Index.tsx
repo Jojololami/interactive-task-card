@@ -36,38 +36,37 @@ const initialTasks: Task[] = [
 ];
 
 const Index = () => {
-  const [tasks, setTasks] = useState<Task[]>(initialTasks);
-  const [completedTasks, setCompletedTasks] = useState<string[]>([]);
+  const [tasks, setTasks] = useState<Task[]>(initialTasks); 
+  
+
+  // UPDATE FUNCTION 
+const updateTask = (updatedTask: Task) => {
+  setTasks((prev) =>
+    prev.map((task) =>
+      task.id === updatedTask.id ? updatedTask : task
+    )
+  );
+};
 
   // toggle checkbox
-  const toggleTask = (id: string) => {
-    setCompletedTasks((prev) =>
-      prev.includes(id)
-        ? prev.filter((taskId) => taskId !== id)
-        : [...prev, id]
-    );
-  };
+ 
 
   // DELETE FUNCTION
   const deleteTask = (id: string) => {
     setTasks((prev) => prev.filter((task) => task.id !== id));
+      }; 
 
-    // cleanup 
-    setCompletedTasks((prev) => prev.filter((taskId) => taskId !== id));
-  };
+ 
 
   const totalTasks = tasks.length;
 
-const completedCount = tasks.filter((t) =>
-  completedTasks.includes(t.id)
-).length;
+const completedCount = tasks.filter((t) => t.status === "done").length;
 
 const overdueCount = tasks.filter((t) => {
-  const isCompleted = completedTasks.includes(t.id);
   const due = new Date(t.dueDate);
   const now = new Date();
 
-  return !isCompleted && due < now;
+  return t.status !== "done" && due < now;
 }).length;
 
   return (
@@ -95,14 +94,13 @@ const overdueCount = tasks.filter((t) => {
           <TaskCard
             key={task.id}
             task={task}
-            isCompleted={completedTasks.includes(task.id)}
-            onToggle={() => toggleTask(task.id)}
             onDelete={() => deleteTask(task.id)} 
+            onUpdate={updateTask}
           />
         ))}
       </div>
     </main>
   );
-};
+}; 
 
-export default Index;
+export default Index; 
